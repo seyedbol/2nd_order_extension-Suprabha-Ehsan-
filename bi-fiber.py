@@ -87,17 +87,26 @@ top().mark(facets, 3)
 bottom().mark(facets, 4)
 ds = Measure("ds", subdomain_data=facets)
 
-bc = DirichletBC(V.sub(0), Constant(0.), facets, 1)
+bc = [DirichletBC(V.sub(0), Constant(0.), facets, 1),
+      DirichletBC(V.sub(0), Constant(1.), facets, 2)]
 # Define source terms
+q_dx = Constant(0)
+h_dy = Constant(0)
+r_dx = Constant(0)
+t_dy = Constant(0)
+x1_dx = Constant(0)
+x1_dy = Constant(0)
+x2_dx = Constant(0)
+x2_dy = Constant(0)
 
-f_1 = (c1*q.dx(0)+c2*h.dx(1))*ds(2)
-f_2 = (c1*r.dx(0)+c2*t.dx(1))*ds(2)
-f_3 = x1.dx(0)*ds(2)
-f_4 = x2.dx(0)*ds(2)
-f_5 = x1.dx(1)*ds(2)
-f_6 = x2.dx(1)*ds(2)
-f_7 = c1*r.dx(0)*ds(2)
-f_8 = c1*q.dx(0)*ds(2)
+f_1 = (c1*q_dx+c2*h_dy) #(c1*q.dx(0)+c2*h.dx(1))*ds(2)
+f_2 = (c1*r_dx+c2*t_dy) #(c1*r.dx(0)+c2*t.dx(1))*ds(2)
+f_3 = x1_dx #x1.dx(0)*ds(2)
+f_4 = x2_dx #x2.dx(0)*ds(2)
+f_5 = x1_dy #x1.dx(1)*ds(2)
+f_6 = x2_dy #x2.dx(1)*ds(2)
+f_7 = c1*r_dx #c1*r.dx(0)*ds(2)
+f_8 = c1*q_dx #c1*q.dx(0)*ds(2)
 
 # Define variational problem
 F = (2*mu*(q+h)*v_1-A*s(x2)*v_1+B*d(x2)*v_1+c1*q.dx(0)*v_1.dx(0) 
@@ -120,3 +129,7 @@ solve(F == 0, u, bc)
 
 # Showing Results
 x1, x2, q, r, h, t, A, B = u.split()
+
+
+plot(x1)
+plt.show()

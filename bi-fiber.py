@@ -40,7 +40,8 @@ def s(x2):
     return x2.dx(1)
 
 # Defining test and trial functions in splitted form
-V = FunctionSpace(mesh, 'P', 1)
+element = VectorElement('P', triangle, 1, dim=8)
+V = FunctionSpace(mesh, element)
 
 v_1, v_2, v_3, v_4, v_5, v_6, v_7, v_8 = TestFunctions(V)
 u = Function(V)

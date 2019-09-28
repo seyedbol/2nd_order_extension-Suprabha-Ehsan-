@@ -120,7 +120,7 @@ F = (2*mu*(q+h)*v_1-A*s(x2)*v_1+B*d(x2)*v_1+c1*q.dx(0)*v_1.dx(0)
     +2*h*s(x2)*g(x1))*v_2)*dx +(q*v_3-x1.dx(0)*v_3.dx(0))*dx+(r*v_4  
     -x2.dx(0)*v_4.dx(0))*dx +(h*v_5-x1.dx(1)*v_5.dx(1))*dx+(t*v_6-x2.dx(1)*v_6.dx(1))*dx +(A*v_7 
     -mu*(q+h)*v_7+c1*r.dx(0)*v_7.dx(0))*dx +(B*v_8-mu*(r+t)*v_8  
-    +c1*q.dx(0)*v_8.dx(0))*dx - f_1*v_1*dx - f_2*v_2*dx - f_3*v_3*dx - f_4*v_4*dx - f_5*v_5*dx - f_6*v_6*dx - f_7*v_7*dx - f_8*v_8*dx
+    +c1*q.dx(0)*v_8.dx(0))*dx - f_1*v_1*ds(2) - f_2*v_2*ds(2) - f_3*v_3*ds(2) - f_4*v_4*ds(2) - f_5*v_5*ds(2) - f_6*v_6*ds(2) - f_7*v_7*ds(2) - f_8*v_8*ds(2)
     
 
 

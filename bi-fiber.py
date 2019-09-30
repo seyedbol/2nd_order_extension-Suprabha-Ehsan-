@@ -88,7 +88,10 @@ bottom().mark(facets, 4)
 ds = Measure("ds", subdomain_data=facets)
 
 bc = [DirichletBC(V.sub(0), Constant(0.), facets, 1),
-      DirichletBC(V.sub(0), Constant(1.), facets, 2)]
+      DirichletBC(V.sub(1), Constant(0.), facets, 1),
+      DirichletBC(V.sub(0), Constant(1.), facets, 2),
+      DirichletBC(V.sub(1), Expression('-(-0.08*pow(x[0],2)+0.3*x[0])', degree =2 ), facets, 3),
+      DirichletBC(V.sub(1), Expression('-0.08*pow(x[0],2)+0.3*x[0]', degree =2 ), facets, 4)]
 # Define source terms
 q_dx = Constant(0)
 h_dy = Constant(0)
@@ -131,5 +134,13 @@ solve(F == 0, u, bc)
 x1, x2, q, r, h, t, A, B = u.split()
 
 
-plot(x1)
+plot(x1, title="x1 plot" , mode= "color")
 plt.show()
+plot(x2, title="x2 plot", mode='color')
+plt.show()
+
+vtkfile_x1 = File('Bi-Directional_Fiber/x1.pvd')
+vtkfile_x2 = File('Bi-Directional_Fiber/x2.pvd')
+
+vtkfile_x1 << (x1)
+vtkfile_x2 << (x2)

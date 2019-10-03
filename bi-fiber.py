@@ -90,6 +90,8 @@ ds = Measure("ds", subdomain_data=facets)
 bc = [DirichletBC(V.sub(0), Constant(0.), facets, 1),
       DirichletBC(V.sub(1), Constant(0.), facets, 1),
       DirichletBC(V.sub(0), Constant(1.), facets, 2),
+      DirichletBC(V.sub(0), Expression('0.5*x[0]', degree =2 ), facets, 3),
+      DirichletBC(V.sub(0), Expression('0.5*x[0]', degree =2 ), facets, 4),
       DirichletBC(V.sub(1), Expression('-(-0.08*pow(x[0],2)+0.3*x[0])', degree =2 ), facets, 3),
       DirichletBC(V.sub(1), Expression('-0.08*pow(x[0],2)+0.3*x[0]', degree =2 ), facets, 4)]
 # Define source terms
@@ -120,10 +122,10 @@ F = (2*mu*(q+h)*v_1-A*s(x2)*v_1+B*d(x2)*v_1+c1*q.dx(0)*v_1.dx(0)
     +c2*t.dx(1)*v_2.dx(1)-0.5*E1*r*v_2-0.5*E2*t*v_2 
     +0.5*E1*(3*r*d(x2)*d(x2)+r*c(x1)*c(x1)+2*q*d(x2)*c(x1))*v_2  
     +0.5*E2*(3*t*s(x2)*s(x2)+t*g(x1)*g(x1) 
-    +2*h*s(x2)*g(x1))*v_2)*dx +(q*v_3-x1.dx(0)*v_3.dx(0))*dx+(r*v_4  
-    -x2.dx(0)*v_4.dx(0))*dx +(h*v_5-x1.dx(1)*v_5.dx(1))*dx+(t*v_6-x2.dx(1)*v_6.dx(1))*dx +(A*v_7 
-    -mu*(q+h)*v_7+c1*r.dx(0)*v_7.dx(0))*dx +(B*v_8-mu*(r+t)*v_8  
-    +c1*q.dx(0)*v_8.dx(0))*dx - f_1*v_1*ds(2) - f_2*v_2*ds(2) - f_3*v_3*ds(2) - f_4*v_4*ds(2) - f_5*v_5*ds(2) - f_6*v_6*ds(2) - f_7*v_7*ds(2) - f_8*v_8*ds(2)
+    +2*h*s(x2)*g(x1))*v_2)*dx +(q*v_3+x1.dx(0)*v_3.dx(0))*dx+(r*v_4  
+    +x2.dx(0)*v_4.dx(0))*dx +(h*v_5+x1.dx(1)*v_5.dx(1))*dx+(t*v_6+x2.dx(1)*v_6.dx(1))*dx +(A*v_7 
+    -mu*(q+h)*v_7+c1*q.dx(0)*v_7.dx(0))*dx +(B*v_8-mu*(r+t)*v_8  
+    +c1*r.dx(0)*v_8.dx(0))*dx - f_1*v_1*ds(2) - f_2*v_2*ds(2) - f_3*v_3*ds(2) - f_4*v_4*ds(2) - f_5*v_5*ds(2) - f_6*v_6*ds(2) - f_7*v_7*ds(2) - f_8*v_8*ds(2)
     
 
 

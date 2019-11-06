@@ -12,18 +12,18 @@ import matplotlib.pyplot as plt
 import math
 
 L = 2
-H = 0.8
-nx = 40 
-ny = 40
+H = 1
+nx = 20 
+ny = 20
 mesh = RectangleMesh(Point(0., 0.), Point(L, H), nx, ny)
-
+sag = mesh.coordinates()
 # Initializing material parameters
-mu = Constant(100)
+mu = Constant(1)
 E1 = Constant(200/mu)
 E2 = Constant(200/mu)
 c1 = Constant(200/mu)
 c2 = Constant(200/mu)
-
+p11 = Constant(50)
 
 
 
@@ -89,8 +89,13 @@ top().mark(facets, 3)
 bottom().mark(facets, 4)
 ds = Measure("ds", subdomain_data=facets)
 
+##modification added for left and right edge 
+u_R = Expression('x[1]', degree=1)
 bc = [DirichletBC(V.sub(0), Constant(0.), facets, 1),
-      DirichletBC(V.sub(0), Constant(2), facets, 2)]
+      DirichletBC(V.sub(0), Constant(2), facets, 2),
+      DirichletBC(V.sub(1),u_R , facets, 1),#completely fixed edge (x2 remains the same on the left edge)
+      DirichletBC(V.sub(1), u_R , facets, 2)]##completely fixed edge (x2 remains the same on the right edge)
+
       #DirichletBC(V.sub(0), Constant(1.), facets, 2),
       #DirichletBC(V.sub(0), Expression('0.5*x[0]', degree =2 ), facets, 3),
       #DirichletBC(V.sub(0), Expression('0.5*x[0]', degree =2 ), facets, 4),
@@ -128,7 +133,10 @@ f_5 = project(x1.dx(1),Q)
 f_6 = project(x2.dx(1),Q)
 f_7 = project(c1*r.dx(0),Q)
 f_8 = project(c1*q.dx(0),Q)
-
+# =============================================================================
+f_9 = project((p11+2*mu*(0.14/H/2))/(2*mu + E1),Q)   
+#f_10 = project((p22)/(2*mu + E1),Q) 
+# =============================================================================
 # Define variational problem
 F = (2*mu*(q+h)*v_1-A*s(x2)*v_1+B*d(x2)*v_1+c1*q.dx(0)*v_1.dx(0) 
     + c2*h.dx(1)*v_1.dx(1)-0.5*E1*q*v_1-0.5*E2*h*v_1 
@@ -141,8 +149,10 @@ F = (2*mu*(q+h)*v_1-A*s(x2)*v_1+B*d(x2)*v_1+c1*q.dx(0)*v_1.dx(0)
     +2*h*s(x2)*g(x1))*v_2)*dx +(q*v_3+x1.dx(0)*v_3.dx(0))*dx+(r*v_4  
     +x2.dx(0)*v_4.dx(0))*dx +(h*v_5+x1.dx(1)*v_5.dx(1))*dx+(t*v_6+x2.dx(1)*v_6.dx(1))*dx +(A*v_7 
     -mu*(q+h)*v_7+c1*q.dx(0)*v_7.dx(0))*dx +(B*v_8-mu*(r+t)*v_8  
-    +c1*r.dx(0)*v_8.dx(0))*dx - f_1*v_1*ds(2) - f_2*v_2*ds(2) - f_3*v_3*ds(2) - f_4*v_4*ds(2) - f_5*v_5*ds(2) - f_6*v_6*ds(2) - f_7*v_7*ds(2) - f_8*v_8*ds(2)
-
+    +c1*r.dx(0)*v_8.dx(0))*dx - f_1*v_1*ds - f_2*v_2*ds - f_3*v_3*ds - f_4*v_4*ds - f_5*v_5*ds - f_6*v_6*ds-f_7*v_7*ds -f_8*v_8*ds-f_9*v_3*ds(2)
+# =============================================================================
+#     -f_9*v_3*ds(2)
+# =============================================================================
 
 ##PICARD Iteration
 u_ = Expression(('0','0','0','0','0','0','0','0' ), degree =1)
@@ -161,7 +171,10 @@ while eps > tol and iter < maxiter:
     print ('eps= ', eps)
     u_k.assign(u)
 
-
+##to find the nodal values for each characteristic like x1,x2,...
+u_nodal_values = np.zeros((1686,1))
+for i in range (1,1686,8):
+    u_nodal_values[i][0] = u.vector().get_local()[i]
 # Showing Results
 x1, x2, q, r, h, t, A, B = u.split()
 # =============================================================================
@@ -183,7 +196,7 @@ plt.show()
 
 
 vtkfile_x1 = File('Bi-Directional_Fiber/x1.pvd')
-vtkfile_x2 = File('Bi-Directional_Fiber/x2-prime.pvd')
+vtkfile_x2 = File('Bi-Directional_Fiber/x2.pvd')
 vtkfile_phi = File('Bi-Directional_Fiber/phi.pvd')
 
 vtkfile_x1 << (x1)
